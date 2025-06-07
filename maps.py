@@ -6,19 +6,21 @@ import pyautogui
 import random
 import pydirectinput as pdi
 import rune_solver
-
+import config
 # Optional: set this if tesseract is not in PATH
 #pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 auto = True
-GTDELAY = 3
+GTDELAY = config.GTDELAY
 times = 0
 last_buff = 0
 # Define the region of the minimap (left, top, width, height)
 MINIMAP_REGION = (0,0,400,400)  # <-- You must specify these based on your screen!
-POT_HP,MIN_HP = 50,30
-POT_MP,MIN_MP = 20,10
-BUTTON_MP,BUTTON_HP = 'j','h'
+
+POT_HP,MIN_HP = config.MIN_HP+20,config.MIN_HP
+POT_MP,MIN_MP = config.MIN_MP+10,config.MIN_MP
+BUTTON_MP,BUTTON_HP = config.BUTTON_MP,config.BUTTON_HP
+
 # Load the template (yellow marker)
 char = cv2.imread('pic\\yellow_marker_720.PNG', cv2.IMREAD_UNCHANGED)
 runepic = cv2.imread('pic\\rune.PNG', cv2.IMREAD_UNCHANGED)
@@ -29,19 +31,11 @@ if char is None:
     raise FileNotFoundError("yellow_marker.PNG not found")
 if runepic is None:
     raise FileNotFoundError("rune.PNG not found")
-if polo is None:
-    raise FileNotFoundError("rune.PNG not found")
-if violet is None:
-    raise FileNotFoundError("violet.PNG not found")
 
 if char.shape[2] == 4:  # Has alpha channel
     char = cv2.cvtColor(char, cv2.COLOR_BGRA2BGR)
 if runepic.shape[2] == 4:  # Has alpha channel
     runepic = cv2.cvtColor(runepic, cv2.COLOR_BGRA2BGR)
-if polo.shape[2] == 4:  # Has alpha channel
-    polo = cv2.cvtColor(polo, cv2.COLOR_BGRA2BGR)
-if violet.shape[2] == 4:  # Has alpha channel
-    violet = cv2.cvtColor(violet, cv2.COLOR_BGRA2BGR)
 
 def capture_minimap():
     screenshot = pyautogui.screenshot(region=MINIMAP_REGION)

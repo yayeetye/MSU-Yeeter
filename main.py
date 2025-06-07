@@ -5,17 +5,17 @@ import pydirectinput as pdi
 import time
 import tkinter as tk
 import threading
-import random
 import pytesseract
-
 import queue
-
 import maps
-import rune_solver
-import pot
+import config
+from dhooks import Webhook
+
+hook = Webhook(config.DC_webhook)
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 pdi.FAILSAFE = False
+
 #threading
 pause_event = threading.Event()
 pause_event.set()
@@ -54,6 +54,7 @@ def lie():
 
     if "Lie Detector" in text:
         set_paused(2)
+        hook.send("<@&1380790894248202282> CAPTCHA")
         print("CAPTCHA\nCAPTCHA\nCAPTCHA\nCAPTCHA\nCAPTCHA")
     else:
         threshold = 0.8
@@ -64,9 +65,11 @@ def lie():
         min_val4, max_val4, min_loc4, max_loc4 = cv2.minMaxLoc(res4)
         if max_val3 >= threshold:
             set_paused(2)
+            hook.send("<@&1380790894248202282> POLO PORTAL")
             print("POLO\nPOLO\nPOLO\nPOLO\nPOLO\n")
         elif max_val4 >= threshold:
             set_paused(2)
+            hook.send("<@&1380790894248202282> VIOLETTA")
             print("VIOLETTA\nVIOLETTA\nVIOLETTA\nVIOLETTA\nVIOLETTA")
         else:
             print("safe")
@@ -90,9 +93,10 @@ def set_paused(state):
             pause_event.clear()
             status_queue.put("Status: Stopped")
             beep()
-            time.sleep(1)
+            hook.send("<@&1380790894248202282> bot stopped, please check")
+            time.sleep(1.5)
             beep()
-            time.sleep(1)
+            time.sleep(1.5)
             beep()
 
 def start_gui():
@@ -147,6 +151,7 @@ def start_gui():
     root.mainloop()
 
 def main():
+    hook.send("<@&1380790894248202282> STARTING BOT")
     gui_thread = threading.Thread(target=start_gui, daemon=True)
     gui_thread.start()
     #kb_thread = threading.Thread(target=keyboard_listener, daemon=True)
