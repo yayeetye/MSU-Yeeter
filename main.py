@@ -35,6 +35,12 @@ if violet is None:
 if violet.shape[2] == 4:  # Has alpha channel
     violet = cv2.cvtColor(violet, cv2.COLOR_BGRA2BGR)
 
+died = cv2.imread('pic\\died.PNG', cv2.IMREAD_UNCHANGED)
+if died is None:
+    raise FileNotFoundError("died.PNG not found")
+if died.shape[2] == 4:  # Has alpha channel
+    died = cv2.cvtColor(died, cv2.COLOR_BGRA2BGR)
+
 def lie():
     screenshot = pyautogui.screenshot()
     img = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
@@ -50,7 +56,7 @@ def lie():
 
     # OCR
     text = pytesseract.image_to_string(mask)
-    cv2.imwrite('lie.jpg', mask)
+    #cv2.imwrite('lie.jpg', mask)
 
     if "Lie Detector" in text:
         set_paused(2)
@@ -63,6 +69,9 @@ def lie():
 
         res4 = cv2.matchTemplate(img, violet, cv2.TM_CCOEFF_NORMED)
         min_val4, max_val4, min_loc4, max_loc4 = cv2.minMaxLoc(res4)
+
+        res5 = cv2.matchTemplate(img, died, cv2.TM_CCOEFF_NORMED)
+        min_val5, max_val5, min_loc5, max_loc5 = cv2.minMaxLoc(res5)
         if max_val3 >= threshold:
             set_paused(2)
             hook.send("<@&1380790894248202282> POLO PORTAL")
@@ -71,6 +80,10 @@ def lie():
             set_paused(2)
             hook.send("<@&1380790894248202282> VIOLETTA")
             print("VIOLETTA\nVIOLETTA\nVIOLETTA\nVIOLETTA\nVIOLETTA")
+        elif max_val5 >= threshold:
+            set_paused(2)
+            hook.send("<@&1380790894248202282> DIED")
+            print("DIED\nDIED\nDIED\nDIED\nDIED")
         else:
             print("safe")
 
