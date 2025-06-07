@@ -14,7 +14,7 @@ import rune_solver
 import pot
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
+pdi.FAILSAFE = False
 #threading
 pause_event = threading.Event()
 pause_event.set()
@@ -32,10 +32,10 @@ POT_HP,MIN_HP = 50,30
 POT_MP,MIN_MP = 20,10
 BUTTON_MP,BUTTON_HP = 'j','h'
 # Load the template (yellow marker)
-char = cv2.imread('yellow_marker_720.PNG', cv2.IMREAD_UNCHANGED)
-runepic = cv2.imread('rune.PNG', cv2.IMREAD_UNCHANGED)
-polo = cv2.imread('polo.PNG', cv2.IMREAD_UNCHANGED)
-violet = cv2.imread('violet.PNG', cv2.IMREAD_UNCHANGED)
+char = cv2.imread('pic\\yellow_marker_720.PNG', cv2.IMREAD_UNCHANGED)
+runepic = cv2.imread('pic\\rune.PNG', cv2.IMREAD_UNCHANGED)
+polo = cv2.imread('pic\\polo.PNG', cv2.IMREAD_UNCHANGED)
+violet = cv2.imread('pic\\violet.PNG', cv2.IMREAD_UNCHANGED)
 
 if char is None:
     raise FileNotFoundError("yellow_marker.PNG not found")
@@ -225,14 +225,14 @@ def sunless_area():
             go_to(rune_pos[0])
             rune_solver.rune_break()
     elif marker_pos[1] < pt2: #platform 2 right side
-        pdi.keyDown('down')
-        pdi.press('space')
-        time.sleep(0.1 + random.random() * 0.1)
-        pdi.keyUp('down')
         if rune_pos[1] < pt2 and rune_pos[0] > 110 and rune_pos[1] > pt1:
             print("case3")
             go_to(rune_pos[0])
             rune_solver.rune_break()
+        pdi.keyDown('down')
+        pdi.press('space')
+        time.sleep(0.1 + random.random() * 0.1)
+        pdi.keyUp('down')
     elif marker_pos[1] < pt3-2 and marker_pos[0] == 134: #ladder rightmost
         pdi.keyDown('right')
         pdi.press('space')
@@ -246,9 +246,7 @@ def sunless_area():
             print("case5")
             time.sleep(1)
             pdi.press('v')
-            time.sleep(3)
-            go_to(rune_pos[0])
-            rune_solver.rune_break()
+            time.sleep(1)
         if times == 0:
             if marker_pos[0] > 90:
                 pdi.press('left')
