@@ -21,12 +21,12 @@ def extract_x_and_class(pred_str):
         result['class_name'] = class_name_match.group(1)
     return result
 
-def rune_solver():
+def rune_break():
     print("rune solver initialised")
     alt()
     t.sleep(2)
     photo = pyautogui.screenshot(region=(0, 0, 1280, 720))
-    photo = "rune.png"
+    #photo = "rune.png"
     results = model.infer(image=photo,
                           confidence=0.5,
                           iou_threshold=0.5)  # get result
@@ -70,5 +70,3 @@ def rune_solver():
     else:
         print("unable to detect 4 arrows")
         return 0
-
-rune_solver()
