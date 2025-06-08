@@ -87,5 +87,23 @@ def y():
 def alt():
     PressKey(0xA4)
     t.sleep(random.uniform(0.15, 0.25))
+    ReleaseKey(0xA4)
+
+def v():
+    PressKey(0x56)
+    t.sleep(random.uniform(0.15, 0.25))
+    ReleaseKey(0x56)
+
+
+def x():
+    PressKey(0x58)
+    t.sleep(random.uniform(0.15, 0.25))
+    ReleaseKey(0x58)
+
+
+def space():
+    PressKey(0x20)
+    t.sleep(random.uniform(0.15, 0.25))
+    ReleaseKey(0x20)
 
 function_map = {"up": up, "down": down, "left": left, "right": right }
