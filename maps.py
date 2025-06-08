@@ -6,21 +6,21 @@ import pyautogui
 import random
 import pydirectinput as pdi
 import rune_solver
-import config
+import keypress as kp
+
+
 # Optional: set this if tesseract is not in PATH
 #pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 auto = True
-GTDELAY = config.GTDELAY
+GTDELAY = 3
 times = 0
 last_buff = 0
 # Define the region of the minimap (left, top, width, height)
 MINIMAP_REGION = (0,0,400,400)  # <-- You must specify these based on your screen!
-
-POT_HP,MIN_HP = config.MIN_HP+20,config.MIN_HP
-POT_MP,MIN_MP = config.MIN_MP+10,config.MIN_MP
-BUTTON_MP,BUTTON_HP = config.BUTTON_MP,config.BUTTON_HP
-
+POT_HP,MIN_HP = 50,30
+POT_MP,MIN_MP = 20,10
+BUTTON_MP,BUTTON_HP = 'j','h'
 # Load the template (yellow marker)
 char = cv2.imread('pic\\yellow_marker_720.PNG', cv2.IMREAD_UNCHANGED)
 runepic = cv2.imread('pic\\rune.PNG', cv2.IMREAD_UNCHANGED)
@@ -31,11 +31,19 @@ if char is None:
     raise FileNotFoundError("yellow_marker.PNG not found")
 if runepic is None:
     raise FileNotFoundError("rune.PNG not found")
+if polo is None:
+    raise FileNotFoundError("rune.PNG not found")
+if violet is None:
+    raise FileNotFoundError("violet.PNG not found")
 
 if char.shape[2] == 4:  # Has alpha channel
     char = cv2.cvtColor(char, cv2.COLOR_BGRA2BGR)
 if runepic.shape[2] == 4:  # Has alpha channel
     runepic = cv2.cvtColor(runepic, cv2.COLOR_BGRA2BGR)
+if polo.shape[2] == 4:  # Has alpha channel
+    polo = cv2.cvtColor(polo, cv2.COLOR_BGRA2BGR)
+if violet.shape[2] == 4:  # Has alpha channel
+    violet = cv2.cvtColor(violet, cv2.COLOR_BGRA2BGR)
 
 def capture_minimap():
     screenshot = pyautogui.screenshot(region=MINIMAP_REGION)
@@ -276,3 +284,187 @@ def sunless_area():
                 pdi.press('up')
             else:
                 go_to(87)
+
+def stairway_to_the_sky_i():
+    global times
+
+
+#    use line segmention method
+    y0 = int(217) #line y positions
+    y1 = int(196)
+    y2 = int(173)
+    y3 = int(151)
+
+    marker_pos, rune_pos = find_marker_location()
+    if marker_pos == None:
+        print("no character position")
+        time.sleep(5)
+        return
+    if rune_pos == None:
+        print("no rune")
+        rune_pos = [1000, 1000]
+    hp = get_hp()
+    print(f"HP: {hp:.2f}%")
+    mp = get_mp()
+    print(f"MP: {mp:.2f}%")
+    chance = random.random()
+    #use hp pot
+    if hp < POT_HP and chance < 0.15:
+        pdi.press(BUTTON_HP)
+    elif hp < MIN_HP:
+        pdi.press(BUTTON_HP)
+    # use mp pot
+    if mp < POT_MP and chance < 0.15:
+        pdi.press(BUTTON_MP)
+    elif mp < MIN_MP:
+        pdi.press(BUTTON_MP)
+
+    buff('o',80) #damage buff
+    buff('0',200) #hyper body
+
+
+    if auto == False:
+        time.sleep(1)
+        print("Auto = False")
+
+
+
+    elif marker_pos[1] > (y0) : # lowest mobless platform there to mainly check for runes
+        if rune_pos[1] > (y0) and rune_pos[1] != 1000: #solve rune is rune is around the platform
+            print("case0")
+            go_to(rune_pos[0])
+            rune_solver.rune_break()
+
+
+        print("turning left")
+        kp.left()
+        time.sleep(random.uniform(1, 1.2 ))
+
+        print("attempting to FJ")
+
+        kp.space()
+        kp.space()
+
+        time.sleep(random.uniform(0.8, 1))
+
+        go_to(103+random.randint(-1,1))
+
+        kp.v()
+        time.sleep(0.5)
+        kp.x()
+
+    elif 150 < marker_pos[1] <163 and 128< marker_pos[0] <158  :#catch stuck on random pile of mobless map, this has to be high up in priority
+        go_to(109+random.randint(-5,5))
+
+    elif y0 >= marker_pos[1] > y1: # bottom most layer with mob
+        if y0 >= rune_pos[1] > y1:  # solve rune is rune is around the platform
+            print("case1")
+            go_to(rune_pos[0])
+            rune_solver.rune_break()
+#
+        go_to(94 + random.randint(-1, 5))
+
+        kp.right() #face right
+        kp.x() #attack
+
+        time.sleep(random.uniform(1.0, 1.2))  # a small break is required else key input will get stickied and wont register
+
+        kp.left()
+        kp.x() #attack
+
+
+        #relocate and move upward
+
+        go_to(94 + random.randint(-1, 1))
+
+        kp.v()
+        time.sleep(0.5)
+        kp.x()
+
+
+    elif y1>= marker_pos[1] > y2 : #platform 2 from bottom
+
+        print("at platofmr 2")
+        if y1 >= rune_pos[1] > y2:
+            print("case1")
+            go_to(rune_pos[0])
+            rune_solver.rune_break()
+
+        go_to(97 + random.randint(-1, 1))
+
+        kp.right() #face right
+        kp.x() #attack
+
+
+        time.sleep(random.uniform(1.0, 1.2))  # a small break is required else key input will get stickied and wont register
+        kp.space() #FJ
+        kp.space()
+
+
+        time.sleep(random.uniform(0.5, 0.7))  # a small break is required else key input will get stickied and wont register
+        kp.x() #attack
+
+        #relocate and move upward
+
+        go_to(104 + random.randint(-4,2))
+
+        kp.v()
+        time.sleep(0.5)
+        kp.x()
+
+    elif (y2) >= marker_pos[1] > (y3): #platform 3 from bottom
+
+        if (y2) >= rune_pos[1] > (y3):
+            print("case3")
+            go_to(rune_pos[0])
+            rune_solver.rune_break()
+
+        go_to(104 + random.randint(-2,2))
+
+        kp.left()
+        kp.x()
+        time.sleep(random.uniform(1.0, 1.2))
+
+        kp.space()
+        kp.space()
+
+        time.sleep(random.uniform(0.3, 0.5))
+        kp.x()
+        time.sleep(random.uniform(1.0, 1.2))
+        go_to(73+random.randint(-2,2))
+
+        kp.x()
+
+        go_to(83+random.randint(0,2))
+
+
+        time.sleep(random.uniform(0.1, 0.2))
+        kp.v()
+        time.sleep(0.3)
+        kp.x()
+
+    elif  marker_pos[1] <= y3 : #top most
+
+        if rune_pos[1] <= y3:
+            print("case4")
+            go_to(rune_pos[0])
+            rune_solver.rune_break()
+
+
+        go_to(90+random.randint(-2,2))
+        kp.right()
+        kp.x()
+
+        time.sleep(random.uniform(1, 1.2))
+
+        kp.space()
+        kp.space()
+
+        time.sleep(random.uniform(0.2, 0.3))
+
+        kp.x()
+        time.sleep(random.uniform(1, 1.2))
+        kp.space()
+        kp.space() #jump off the edg3e and reach bottom most, this will restart cycle
+
+        time.sleep(3) #falling off edge give some time
